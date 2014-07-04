@@ -7,3 +7,6 @@ C:\Users\MinijackB\documents\visual studio 2013\Projects\MiniBotV1\MiniBotV1\obj
 C:\Users\MinijackB\Documents\Visual Studio 2013\Projects\MiniBot\MiniBotV1\bin\Debug\MiniBotV1.exe.config
 C:\Users\MinijackB\Documents\Visual Studio 2013\Projects\MiniBot\MiniBotV1\obj\Debug\MiniBotV1.exe
 C:\Users\MinijackB\Documents\Visual Studio 2013\Projects\MiniBot\MiniBotV1\obj\Debug\MiniBotV1.pdb
+C:\Users\MinijackB\Documents\Visual Studio 2013\Projects\MiniBot\MiniBotV1\bin\Debug\MiniBotV1.exe
+C:\Users\MinijackB\Documents\Visual Studio 2013\Projects\MiniBot\MiniBotV1\bin\Debug\MiniBotV1.pdb
+C:\Users\MinijackB\Documents\Visual Studio 2013\Projects\MiniBot\MiniBotV1\obj\Debug\MiniBotV1.csprojResolveAssemblyReference.cache
