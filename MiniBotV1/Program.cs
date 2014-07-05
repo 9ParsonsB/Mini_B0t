@@ -397,10 +397,18 @@ namespace MiniBotV1
                             }*/
                             else if ((isIn(data.ToLower(), greetTrigger) || isIn(data.ToLower(), greetTrigger,"!")) && shouldGreet && user != lastGreet) //data.ToLower() == "hi" || data.ToLower() == "hello" || data.ToLower() == "hay" || data.ToLower() == "hey" || data.ToLower() == "hello?")
                             {
-
-                                int random = rnd.Next(0, greetings.Length);
-                                Writer.WriteLine(prefix + greetings[random] + " " + fancyUser);
-                                Writer.Flush();
+                                if (user == "merlyin")
+                                {
+                                    Writer.WriteLine(prefix + "Hay Merlyin! *highfive*!");
+                                    Writer.Flush();
+                                }
+                                else
+                                {
+                                    int random = rnd.Next(0, greetings.Length);
+                                    Writer.WriteLine(prefix + greetings[random] + " " + fancyUser);
+                                    Writer.Flush();
+                                    
+                                }
                                 lastGreet = user;
                             }
                             else if (data.Length > 2 && data.ToLower().Substring(0, 3) == "!hi" && mod && data.ToLower().Substring(4) != lastFollow)
@@ -445,7 +453,7 @@ namespace MiniBotV1
                                 //Writer.Flush();
                                 if (data.Length > 14 && data.ToLower().Substring(11, 3) == "add")
                                 {
-                                    blacklist.Add(data.Substring(15));
+                                    blacklist.Add(data.Substring(15).ToLower());
                                     Writer.WriteLine(prefix+"\""+data.Substring(15) + "\" added to blacklist");
                                     Writer.Flush();
                                 }
@@ -466,10 +474,11 @@ namespace MiniBotV1
                             }
                             if (data.Length == 4 && data.ToLower() == "!exit" && mod)
                             {
-                                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\booter\bot\mini_bot.config"))
+                                /*StreamWriter stream = null;
+                                try
                                 {
-                                    file.WriteLine();
-                                }
+                                    XmlSerializer xmlSerializer = new XmlSerializer
+                                }*/
                             }
                             Writer.Flush();
                             // Here we check the Match instance.
