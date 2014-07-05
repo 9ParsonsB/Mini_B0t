@@ -470,6 +470,31 @@ namespace MiniBotV1
                                         Writer.WriteLine(prefix + "List of blacklisted people: " + people);
                                         Writer.Flush();
                                     }
+                                    else
+                                    {
+                                        Writer.WriteLine(prefix + "No one is in the blacklist!");
+                                        Writer.Flush();
+                                    }
+                                }
+                                else if (data.Length > 16 && data.ToLower().Substring(11, 6) == "remove")
+                                {
+                                    var finding = data.ToLower().Substring(18);
+                                    var i = 0;
+                                    bool found = false;
+                                    foreach (var x in blacklist.ToArray())
+                                    {
+                                        if (finding == blacklist[i]){
+                                            blacklist.RemoveAt(i);
+                                            Writer.WriteLine(prefix+"User: "+finding+ " has been removed from the blacklist!");
+                                            Writer.Flush();
+                                            found = true;
+                                        }
+                                    }
+                                    if (!found){
+                                        Writer.WriteLine(prefix+"no user by the name: " + finding + " was found!");
+                                        Writer.Flush();
+                                    }
+
                                 }
                             }
                             if (data.Length == 4 && data.ToLower() == "!exit" && mod)
