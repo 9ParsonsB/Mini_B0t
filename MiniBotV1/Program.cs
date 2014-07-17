@@ -12,12 +12,28 @@ using System.Xml.Linq;
 namespace MiniBotV1
 {
 
+    /*public class ReturnValue
+    {
+        public string Name {get; set; }
+        public string Msg {get; set; }
+        public string Com {get; set; }
+        public List<string> Arg {get; set; }
+        public ReturnValue(string name, string msg, string com, List<string> arg)
+        {
+            Name = name;
+            Msg = msg;
+            Com = com;
+            Arg = arg;
+        }
+
+    }*/
+
     class Program
     {
 
         static bool isMod(string user)
         {
-            string[] mods = {"minijackb", "bidaman98caty", "tehbossaru", "leocrubellatti","z3r0_b00t3r"};
+            string[] mods = {"minijackb", "bidaman98caty", "tehbossaru", "leocrubellatti","z3r0_b00t3r","merlyin"};
             foreach (var x in mods)
             {
                 if (user.ToLower() == x.ToLower())
@@ -44,6 +60,8 @@ namespace MiniBotV1
             return false;
         }
 
+
+
         static string[] fixOutput(string data)
         {
             //Console.WriteLine(data);
@@ -56,22 +74,52 @@ namespace MiniBotV1
 
 
 
-            string name = "Unknown";
+            string user = "Unknown";
             string message = "";
-
+            string command = "";
+            string[] args = {};
             string newdata = Regex.Replace(data, @"!.+ :", ":");
             Regex nameExpr = new Regex(@":.*:");
             Match match = nameExpr.Match(newdata);
+
             if (match.Success)
             {
-                name = Regex.Replace(match.Groups[0].Value,":", "");
+                user = Regex.Replace(match.Groups[0].Value,":", "");
                 //Console.WriteLine(name);
             }
+
             message = Regex.Replace(newdata, ":.*:", "");
             //Console.WriteLine(name + ": " + message + "\n");
 
-            string[] re = {name, message};
-            return re;
+            Regex ComExpr = new Regex(@"!\w*\W");
+            match = ComExpr.Match(message);
+            //Console.WriteLine(match.Groups[0].Value);
+
+            if (match.Success)
+            {
+                command = match.Groups[0].Value;
+            }
+
+            command = Regex.Replace(command, " ", "");
+
+            return new string[] { user, message, command };
+            
+
+            
+
+
+            //return new ReturnValue(user, message, command, args);
+        }
+
+        static string[] getArgs(string message)
+        {
+            string[] args = message.Split(' ');
+            List<string> tempArgs = new List<string>();
+            for (var i = 1; i < args.Length; i++)
+            {
+                tempArgs.Add(args[i]);
+            }
+                return tempArgs.ToArray();
         }
         //static void checkInput()
         //{
@@ -86,11 +134,13 @@ namespace MiniBotV1
         //}
         static void Main(string[] args)
         {
+            var merlyin = false;
+            var bidaman98caty = false;
             string userName = "Mini_b0t"; // username
             string authCode = "oauth:kcm57m24avvtckilp0qvjqs9xtim5ng"; // auth key
-            string channel = "z3r0_b00t3r"; // name of channel you want to connect to
-            string[] backTrigger = { "back", "im back", "i'm back", "i am back" };
-            string[] greetTrigger = { "hey chat", "sup all", "salut", "herro", "hellu", "hi there", "hey guys", "moi", "hi", "hello", "hay", "hey", "whats up", "hiya", "sup", "haya", "hola", "ola", "buna", "aloha", "what up", "heyo", "hayo" };
+            string channel = "mini_b0t".ToLower(); // name of channel you want to connect to
+            string[] backTrigger = { "back", "im back", "i'm back", "i am back", "back :d" };
+            string[] greetTrigger = {"hai","yo", "hey chat", "sup all", "salut", "herro", "hellu", "hi there", "hey guys", "moi", "hi", "hello", "hay", "hey", "whats up", "hiya", "sup", "haya", "hola", "ola", "buna", "aloha", "what up", "heyo", "hayo" };
             string[] greetings = { "Hi", "Hello", "Hay", "Hey", "Hiya", "Sup", "Haya" };//, "hola", "ola", "buna", "aloha", "what up"};
             List<string> users = new List<string>();
             bool submitName = false;
@@ -128,36 +178,60 @@ namespace MiniBotV1
             List<string> blacklist = new List<string>();
             bool inputAllowed = true;
             List<string> name = new List<string>();
+            List<string> nameUser = new List<string>();
             List<string> gameName = new List<string>();
             List<int> gameAmount = new List<int>();
+            var time = false;
+            bool debugMode = false;
+
+
             while (shouldRun)
             {
-                inputAllowed = true;
-                //string key = Console.ReadKey().ToString();
-                //if (key.ToUpper() == "T")
-                //{
-                //    Console.WriteLine("lololol");
-                //    checkInput();
-                //}
-                //else
-                //{
+
                 data = Reader.ReadLine();
                 if (data != null)
                 {
-                    
-                    
+
+                    if (DateTime.Now.ToString("htt") == "9PM" && !time)
+                    {
+                        time = true;
+                        Writer.WriteLine(prefix + "The time is: " + DateTime.Now.ToString("h:mm:ss tt"));
+                        Writer.Flush();
+                    }
 
                     Console.WriteLine(data);
+
                     string[] re = fixOutput(data);
+                    string user = re[0];
                     data = re[1];
-                    var user = re[0];
                     string fancyUser = user.Substring(0, 1).ToUpper() + user.Substring(1);
+                    string command = re[2].ToString().ToLower();
+                    string[] ComArgs = getArgs(re[1]);
+
                     Random rnd = new Random();
                     inputAllowed = !isIn(user, blacklist.ToArray());
 
                     int Ran = rnd.Next(0,300);
                     if (Ran == 1){
                         Console.Clear();
+                    }
+
+                    if (debugMode && !user.Contains("tmi.twitch.tv"))
+                    {
+                        Writer.WriteLine(prefix + "fancyUser: \"" + fancyUser + "\"");
+                        Writer.Flush();
+                        Writer.WriteLine(prefix + "message: \"" + data + "\"");
+                        Writer.Flush();
+                        Writer.WriteLine(prefix + "command: \"" + command + "\"");
+                        Writer.Flush();
+                        Writer.WriteLine(prefix + "ComArgs amount: " + ComArgs.Length.ToString());
+                        Writer.Flush();
+                        foreach (var i in ComArgs)
+                        {
+                            Writer.WriteLine(prefix + "args: \"" + i + "\"");
+                            Writer.Flush();
+                        }
+
                     }
 
                     Writer.Flush();
@@ -187,7 +261,7 @@ namespace MiniBotV1
 
                             //Console.WriteLine(user + ": " + data);
 
-                            if (data.ToLower() == "!time")// && !user.Contains("bida") || !user.Contains("leo") || !user.Contains("minijack"))
+                            if (command == "!time")// && !user.Contains("bida") || !user.Contains("leo") || !user.Contains("minijack"))
                             {
 
                                 int rand = rnd.Next(1, 3);
@@ -198,16 +272,13 @@ namespace MiniBotV1
                                 Writer.Flush();
 
                             }
-                            else if (data.ToLower() == "!fail")
+                            else if (command == "!fail")
                             {
                                 Writer.Flush();
                                 int random = rnd.Next(1, 3);
-                                Console.WriteLine(random);
-                                Console.WriteLine(random.GetType());
-                                Console.WriteLine(1.GetType());
                                 if (random == 1)
                                 {
-                                    Writer.WriteLine(prefix + "YES!");
+                                    Writer.WriteLine(prefix + "FAIL!");
                                     Writer.Flush();
                                 }
                                 else
@@ -219,60 +290,71 @@ namespace MiniBotV1
 
 
                             }
-                            else if (data.Length > 6 && data.ToLower().Substring(0, 5) == "!game")
+                            else if (command == "!win")
+                            {
+                                int random = rnd.Next(1, 2);
+                                if (random == 1)
+                                {
+                                    Writer.WriteLine(prefix + "WIN!");
+                                    Writer.Flush();
+                                }
+                                else
+                                {
+                                    Writer.WriteLine(prefix + " ...No.");
+                                    Writer.Flush();
+                                }
+                            }
+                            else if (command == "!game")
                             {
                                 Console.WriteLine("said game");
-                                if (!submitGame)
+                                if (!submitGame) // if the poll is not open
                                 {
-
-                                    if (data.Length > 8 && data.ToLower().Substring(6, 4) == "open" && mod)
+                                    if (ComArgs[0] == "open" && mod)
                                     {
                                         Console.WriteLine("turning game on");
-                                        string[] match = data.Split(new Char[] { ' ' });
-
-                                        if (match.Length != 1)
+                                        //string[] match = data.Split(new Char[] { ' ' });
+                                        if (ComArgs.Length > 1)
                                         {
-                                            submitGame = true;
-                                            gameName.Clear();
+                                            submitGame = true; //users can now submit there choice of game
+                                            gameName.Clear(); // clears the previous game names, amount and users
                                             gameAmount.Clear();
                                             users.Clear();
-                                            Console.WriteLine("found expresion");
+                                        //    Console.WriteLine("found expresion");
                                             List<string> games = new List<string>();
-                                            for (var i = 2; i < match.Length; i++)
+                                            for (var i = 1; i < ComArgs.Length; i++) // loops through the paramaters (except the first) and adds them to the list of games the user can choose
                                             {
-                                                games.Add(match[i]);
+                                                games.Add(ComArgs[i]);
                                             }
                                             //name = Regex.Replace(match.Groups[0].Value, ":", "");
                                             //Console.WriteLine(name);
-                                            Writer.WriteLine(prefix + "You can now submit ideas for what game to play using \"!game <Your Game Choice>\"");
                                             Writer.Flush();
-                                            if (match.Length >= 1)
+                                            
+                                            if (ComArgs.Length >= 1)
                                             {
                                                 message = "";
                                                 foreach (var i in games)
                                                 {
                                                     gameName.Add(i);
                                                     gameAmount.Add(0);
-                                                    if (i != "on" && i != "off")
+                                                    if (i != "open" && i != "close") // failsafe incase the open or close oporator are in the games array
                                                     {
-                                                        message += ", " + i;
+                                                        message += ", \"" + i+"\"";
                                                     }
-
                                                 }
+
+                                                Writer.WriteLine(prefix + "You can now submit ideas for what game to play using: \"!game (your game choice)\"");
+                                                Writer.Flush();
                                                 Writer.WriteLine(prefix + "The games you can choose from are: " + message.Substring(2) + ". (IS CASE-SENSITIVE)");
                                                 Writer.Flush();
                                             }
-
                                         }
                                         else
                                         {
                                             Writer.Write(prefix + "Somthing went wrong, sorry " + user);
                                             Writer.Flush();
                                         }
-
-
                                     }
-                                    else if (data.ToLower().Substring(6) == "list")
+                                    else if (ComArgs[0] == "list")
                                     {
                                         var game = "";
                                         for (var x = 0; x < gameName.Count; x++)
@@ -282,87 +364,104 @@ namespace MiniBotV1
                                         Writer.WriteLine(prefix + "List of Suggested Games: " + game.Substring(2));
                                         Writer.Flush();
                                     }
-
-
-
                                 }
-                                else
+                                else // if the poll is open
                                 {
-                                    if (data.ToLower().Substring(6) == "close" && mod)
+                                    if (ComArgs[0] == "close" && mod)
                                     {
                                         submitGame = false;
                                         Writer.WriteLine(prefix + "Voting has closed!! Please dont vote anymore!");
                                         Writer.Flush();
-                                    }
-                                    else if (!isIn(user, users.ToArray()))
-                                    {
-                                        users.Add(user);
-                                        Writer.WriteLine(prefix + "vote added; " + fancyUser + "!" + " You choose: " + data.Substring(6).ToString());
-                                        Writer.Flush();
-                                        var temp = data.Substring(6).ToString();
-                                        var exist = false;
-                                        for (var i = 0; i < gameName.Count; i++)
+
+                                        var game = "";
+                                        for (var x = 0; x < gameName.Count; x++)
                                         {
-                                            if (gameName[i] == temp)
+                                            game += ", " + gameName[x] + ": " + gameAmount[x];
+                                        }
+                                        Writer.WriteLine(prefix + "List of Suggested Games: " + game.Substring(2));
+                                        Writer.Flush();
+                                    }
+                                    else if (!isIn(user, users.ToArray())) // adds users choice
+                                    {
+                                        var exist = false;
+                                        for (var i = 0; i < gameName.Count; i++) // loops through games avaliable
+                                        {
+                                            if (gameName[i] == ComArgs[0]) // if the user choice is in the list of games they are allowed to choose from
                                             {
-                                                gameAmount[i] += 1;
-                                                exist = true;
+                                                gameAmount[i] += 1; // add to the amount of times that game has been chosen
+                                                exist = true; // record that we have found a match
+                                                break; // exit from the loop (this is good practice incase the array of games is huge and taking up tick cycles)
                                             }
                                         }
-                                        if (!exist)
+                                        if (!exist) // if what the user said is not a valid choice
                                         {
-                                            Writer.WriteLine(prefix + "Sorry, " + fancyUser + " what you said is not valid");
+                                            Writer.WriteLine(prefix + "Sorry, " + fancyUser + ", what you said is not a valid choice"); // tell them what they did wrong
+                                            Writer.Flush();
+                                        }
+                                        else // if what the user said is vaild
+                                        {
+                                            users.Add(user); // add them to the list of users so that they cannot vote again
+                                            Writer.WriteLine(prefix + "vote added; " + fancyUser + "!" + " You chose: " + ComArgs[0]);
                                             Writer.Flush();
                                         }
                                     }
                                 }
                             }
-                            else if (data.Length > 6 && data.ToLower().Substring(0, 7) == "!plague")
+                            else if (command == "!name")
                             {
-                                Console.WriteLine("said plague");
+                                //Console.WriteLine("\""+data.ToLower().Substring(0, 5)+"\"");
+                                //Console.WriteLine("\"" + data.ToLower().Substring(6) + "\"");
+                                //Console.WriteLine(submitName);
                                 if (!submitName)
                                 {
-                                    if (data.ToLower().Substring(8) == "open" && mod)
+                                    //Console.WriteLine("here1");
+                                    if (ComArgs[0] == "open" && mod)
                                     {
-                                        Writer.WriteLine(prefix + " You can now submit names using \"!plague <Your Plague Name>\"");
+                                        Writer.WriteLine(prefix + "You can now submit names using \"!name (Your name submission)\"");
                                         Writer.Flush();
+                                        //Writer.Flush();
+                                        //Writer.WriteLine(prefix + " You can now submit names using \"!name <Your name Submission>\"");
+                                        //Writer.Flush();
+                                        Console.WriteLine("here2");
                                         submitName = true;
+                                        nameUser.Clear();
                                         name.Clear();
                                     }
-                                    else if (data.ToLower().Substring(8) == "list")
+                                    else if (ComArgs[0] == "list")
                                     {
                                         var names = "";
                                         foreach (var i in name)
                                         {
                                             names += ", " + i;
                                         }
-                                        Writer.WriteLine(prefix + "List of plague names submitted: " + names.Substring(2));
+                                        Writer.WriteLine(prefix + "List of names submitted: " + names.Substring(2));
                                         Writer.Flush();
                                     }
                                 }
                                 else
                                 {
-                                    if (data.ToLower().Substring(8) == "close" && isMod(user))
+                                    if (ComArgs[0] == "close" && isMod(user))
                                     {
                                         submitName = false;
-                                        Writer.WriteLine(prefix + "You can no longer submit plague names!");
+                                        Writer.WriteLine(prefix + "You can no longer submit names!");
                                         Writer.Flush();
                                         var names = "";
                                         foreach (var i in name)
                                         {
-                                            names += ", " + i;
+                                            names += ", " + i + " ("+nameUser[name.IndexOf(i)]+")";
                                         }
-                                        Writer.WriteLine(prefix + "List of plague names submitted: " + names.Substring(2));
+                                        Writer.WriteLine(prefix + "List of names submitted: " + names.Substring(2));
                                         Writer.Flush();
                                     }
                                     else
                                     {
-                                        var temp = data.Substring(8).ToString();
+                                        var temp = ComArgs[0].ToString();
                                         name.Add(temp);
+                                        nameUser.Add(fancyUser);
                                     }
                                 }
                             }
-                            else if (data.Length > 6 && data.ToLower().Substring(0, 6) == "!spawn" && mod)
+                            else if (command == "!spawn" && mod)
                             {
                                 Console.WriteLine("said spawn");// -- working
                                 Regex nameExpr = new Regex(@"\s.\s");
@@ -378,14 +477,14 @@ namespace MiniBotV1
                                     //Console.WriteLine(name);
                                 }
                             }
-                            else if (data.Length > 2 && data.ToLower().Substring(0, 3) == "!wb" && mod)
+                            else if (command == "!wb" && mod)
                             {
                                 Writer.WriteLine(prefix + "Welcome back " + data.Substring(4));
                                 Writer.Flush();
                             }
-                            else if ((isIn(data.ToLower(), backTrigger)|| isIn(data.ToLower(), backTrigger,"!")) && shouldGreet)
+                            else if ((isIn(data.ToLower(), backTrigger) || isIn(data.ToLower(), backTrigger, "!") || isIn(data.ToLower(), backTrigger, "*")) && shouldGreet)
                             {
-                                Writer.WriteLine(prefix + "Welcome back " + fancyUser);
+                                Writer.WriteLine(prefix + "Welcome back " + fancyUser + " MrDestructoid /");
                                 Writer.Flush();
                             }
                             /*else if (data.ToLower() == "!help" && mod && false)
@@ -395,11 +494,14 @@ namespace MiniBotV1
                                 Writer.WriteLine(prefix + "!fail : Tells you wether something was a fail or no. ");
                                 Writer.Flush();
                             }*/
-                            else if ((isIn(data.ToLower(), greetTrigger) || isIn(data.ToLower(), greetTrigger,"!")) && shouldGreet && user != lastGreet) //data.ToLower() == "hi" || data.ToLower() == "hello" || data.ToLower() == "hay" || data.ToLower() == "hey" || data.ToLower() == "hello?")
+                            else if ((isIn(command, greetTrigger) || isIn(data.ToLower(), greetTrigger,"!") || isIn(data.ToLower(), greetTrigger,"*")) && shouldGreet && user != lastGreet) //data.ToLower() == "hi" || data.ToLower() == "hello" || data.ToLower() == "hay" || data.ToLower() == "hey" || data.ToLower() == "hello?")
                             {
-                                if (user == "merlyin")
+                                if (user.ToLower() == "merlyin")
                                 {
-                                    Writer.WriteLine(prefix + "Hay Merlyin! *highfive*!");
+                                    merlyin = true;
+                                    Writer.WriteLine(prefix + "Hay Merlyin!");
+                                    Writer.Flush();
+                                    Writer.WriteLine(prefix + "/me holds up hand for highfive");
                                     Writer.Flush();
                                 }
                                 else
@@ -411,53 +513,71 @@ namespace MiniBotV1
                                 }
                                 lastGreet = user;
                             }
-                            else if (data.Length > 2 && data.ToLower().Substring(0, 3) == "!hi" && mod && data.ToLower().Substring(4) != lastFollow)
+                            else if (ComArgs.Length == 1 && command == "!hi" && mod && ComArgs[0] != lastFollow)
                             {
-
                                 var person = data.Substring(4);
                                 lastFollow = person;
                                 Writer.WriteLine(prefix + "Hi " + person + ". Thanks for the follow Kappa");
                                 Writer.Flush();
-
                             }
-                            else if (data.Length > 5 && data.ToLower().Substring(0, 6) == "!greet" && mod)
+                            else if (ComArgs.Length == 1 && command == "!greet" && mod)
                             {
                                 int random = rnd.Next(0, greetings.Length);
-                                Writer.WriteLine(prefix + greetings[random] + " " + data.Substring(6));
+                                Writer.WriteLine(prefix + greetings[random] + " " + ComArgs[0]);
                                 Writer.Flush();
                             }
-                            else if (data.Length > 4 && data.Substring(0, 5) == "!conf")
+                            else if (ComArgs.Length == 2 && command.Contains("!conf") && mod)
                             {
-                                //Console.WriteLine("user: " + user + " is edditing config");
-                                //Console.WriteLine(data.Substring(5, 5));
+                                //Writer.WriteLine(prefix + "config");
+                                //Writer.Flush();
+                                Console.WriteLine("user: " + user + " is edditing config");
+                                Console.WriteLine(command);
 
-                                //Console.WriteLine(data.Substring(15));
+                                Console.WriteLine(ComArgs[0]);
                                 //Console.WriteLine("changing greeting");
-                                if (data.Substring(6) == "on")
+                                if (ComArgs[0] == "greeting")
                                 {
-                                    shouldGreet = true;
-                                    Writer.WriteLine(prefix + "Greeting turned on");
-                                    Writer.Flush();
+                                    if (ComArgs[1] == "on")
+                                    {
+                                        shouldGreet = true;
+                                        Writer.WriteLine(prefix + "Greeting mode on");
+                                        Writer.Flush();
+                                    }
+                                    else if (ComArgs[1] == "off")
+                                    {
+                                        shouldGreet = false;
+                                        Writer.WriteLine(prefix + "Greeting mode off");
+                                        Writer.Flush();
+                                    }
                                 }
-                                else if (data.Substring(6) == "off")
+                                else if (ComArgs[0] == "debug")
                                 {
-                                    shouldGreet = false;
-                                    Writer.WriteLine(prefix + "Greeting turned off");
-                                    Writer.Flush();
+                                    if (ComArgs[1] == "on")
+                                    {
+                                        debugMode = true;
+                                        Writer.WriteLine(prefix + "Debug mode on");
+                                        Writer.Flush();
+                                    }
+                                    else if (ComArgs[1] == "off")
+                                    {
+                                        debugMode = false;
+                                        Writer.WriteLine(prefix + "Debug mode off");
+                                        Writer.Flush();
+                                    }
                                 }
 
                             }
-                            else if (mod && data.Length > 12 && data.ToLower().Substring(0, 10) == "!blacklist" && mod)
+                            else if (mod && command == "!blacklist" && mod)
                             {
                                 //Writer.WriteLine(prefix + "said blacklist");
                                 //Writer.Flush();
-                                if (data.Length > 14 && data.ToLower().Substring(11, 3) == "add")
+                                if (ComArgs.Length == 2 && ComArgs[0] == "add")
                                 {
-                                    blacklist.Add(data.Substring(15).ToLower());
+                                    blacklist.Add(ComArgs[1].ToLower());
                                     Writer.WriteLine(prefix+"\""+data.Substring(15) + "\" added to blacklist");
                                     Writer.Flush();
                                 }
-                                else if (data.Length > 14 && data.ToLower().Substring(11, 4) == "list" )
+                                else if (ComArgs[0] == "list")
                                 {
                                     if (blacklist.ToArray().Length != 0)
                                     {
@@ -476,9 +596,9 @@ namespace MiniBotV1
                                         Writer.Flush();
                                     }
                                 }
-                                else if (data.Length > 16 && data.ToLower().Substring(11, 6) == "remove")
+                                else if (ComArgs[0] == "remove")
                                 {
-                                    var finding = data.ToLower().Substring(18);
+                                    var finding = ComArgs[1];
                                     var i = 0;
                                     bool found = false;
                                     foreach (var x in blacklist.ToArray())
@@ -494,16 +614,40 @@ namespace MiniBotV1
                                         Writer.WriteLine(prefix+"no user by the name: " + finding + " was found!");
                                         Writer.Flush();
                                     }
-
                                 }
                             }
-                            if (data.Length == 4 && data.ToLower() == "!exit" && mod)
+                            else if (command == "!exit" && mod)
                             {
                                 /*StreamWriter stream = null;
                                 try
                                 {
-                                    XmlSerializer xmlSerializer = new XmlSerializer
+                              http://snag.gy/REMZq.jpg      XmlSerializer xmlSerializer = new XmlSerializer
                                 }*/
+                            }
+                            else if (merlyin == true)
+                            {
+                                if (data.Contains("highfive") && user == "merlyin")
+                                {
+                                    Writer.WriteLine(prefix + "/me loves Merlyin more than bidaman98caty");
+                                    Writer.Flush();
+                                    merlyin = false;
+                                    bidaman98caty = true;
+                                }
+
+                            }
+                            else if (user.ToLower().Contains("bidaman") && bidaman98caty)
+                            {
+                                if (data.ToLower().Contains("love") && data.ToLower().Contains("mini"))
+                                {
+                                    Writer.WriteLine(prefix + "YOU'RE NOT MY FATHER BIDAMAN98CATY!");
+                                    Writer.Flush();
+                                    bidaman98caty = false;
+                                }
+                            }
+                            
+                            else if (user.ToLower() == "minijackb" && command == "!ammo"){
+                                Writer.WriteLine(prefix+"!b00llets");
+                                Writer.Flush();
                             }
                             Writer.Flush();
                             // Here we check the Match instance.
@@ -526,7 +670,5 @@ namespace MiniBotV1
                 }
             }
         }
-
     }
 }
-//}
