@@ -38,65 +38,44 @@ namespace MiniBotV1
 
         public bool shouldRun
         {
-            get
-            {
-                return _shouldRun;
-            }
+            get { return _shouldRun; }
             set
             {
                 if (value.GetType() != true.GetType())
-                {
                     throw new OverflowException();
-                }
-                _shouldRun = value;
+                else
+                    _shouldRun = value;
             }
-
         }
 
 
         public bool inputAllowed
         {
-            get
-            {
-                return _inputAllowed;
-            }
+            get { return _inputAllowed; }
             set
             {
                 if (value.GetType() != true.GetType())
-                {
                     throw new OverflowException();
-                }
-                _inputAllowed = value;
+                else
+                    _inputAllowed = value;
             }
 
         }
 
         public bool debugMode
         {
-            get
-            {
-                return _debugMode;
-            }
+            get { return _debugMode; }
             set
             {
                 if (value.GetType() != true.GetType())
-                {
                     throw new OverflowException();
-                }
-                _debugMode = value;
+                else
+                    _debugMode = value;
             }
 
         }
 
-        public string[] mods
-        {
-            get
-            {
-                return _mods;
-            }
-            
-        }
-
+        public string[] mods { get { return _mods; } }
     }
 
     class Program
