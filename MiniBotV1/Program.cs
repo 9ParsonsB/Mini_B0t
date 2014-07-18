@@ -48,7 +48,6 @@ namespace MiniBotV1
             }
         }
 
-
         public bool inputAllowed
         {
             get { return _inputAllowed; }
@@ -189,7 +188,7 @@ namespace MiniBotV1
             var bidaman98caty = false;
             string userName = "Mini_b0t"; // username
             string authCode = "oauth:kcm57m24avvtckilp0qvjqs9xtim5ng"; // auth key
-            string channel = "mini_b0t".ToLower(); // name of channel you want to connect to
+            string channel = "z3r0_b00t3r".ToLower(); // name of channel you want to connect to
             string[] backTrigger = { "back", "im back", "i'm back", "i am back", "back :d" };
             string[] greetTrigger = {"hai","yo", "hey chat", "sup all", "salut", "herro", "hellu", "hi there", "hey guys", "moi", "hi", "hello", "hay", "hey", "whats up", "hiya", "sup", "haya", "hola", "ola", "buna", "aloha", "what up", "heyo", "hayo" };
             string[] greetings = { "Hi", "Hello", "Hay", "Hey", "Hiya", "Sup", "Haya" };//, "hola", "ola", "buna", "aloha", "what up"};
@@ -222,7 +221,6 @@ namespace MiniBotV1
             var message = "";
             // string[] ex;
             
-            bool input = false;
             string lastGreet = "";
             string lastFollow = "";
             bool shouldGreet = true;
@@ -483,7 +481,7 @@ namespace MiniBotV1
                                         var names = "";
                                         foreach (var i in name)
                                         {
-                                            names += ", " + i;
+                                            names += ", " + i + " (" + nameUser[name.IndexOf(i)] + ")";
                                         }
                                         Writer.WriteLine(prefix + "List of names submitted: " + names.Substring(2));
                                         Writer.Flush();
@@ -499,16 +497,30 @@ namespace MiniBotV1
                                         var names = "";
                                         foreach (var i in name)
                                         {
-                                            names += ", " + i + " ("+nameUser[name.IndexOf(i)]+")";
+                                            names += ", " + i + " ("+nameUser[name.IndexOf(i)]+ ")";
                                         }
                                         Writer.WriteLine(prefix + "List of names submitted: " + names.Substring(2));
                                         Writer.Flush();
                                     }
                                     else
                                     {
+                                        
                                         var temp = ComArgs[0].ToString();
-                                        name.Add(temp);
-                                        nameUser.Add(fancyUser);
+                                        if (isIn(temp, name.ToArray()))
+                                        {
+                                            if (!nameUser[name.IndexOf(temp)].Contains(user)) { nameUser[name.IndexOf(temp)] += ", " + user; }
+                                            else
+                                            {
+                                                Writer.WriteLine(prefix + fancyUser + ", you have already submitted that name!");
+                                                Writer.Flush();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            name.Add(temp);
+                                            nameUser.Add(fancyUser);
+                                        }
+
                                     }
                                 }
                             }
@@ -545,7 +557,7 @@ namespace MiniBotV1
                                 Writer.WriteLine(prefix + "!fail : Tells you wether something was a fail or no. ");
                                 Writer.Flush();
                             }*/
-                            else if ((isIn(command, greetTrigger) || isIn(data.ToLower(), greetTrigger,"!") || isIn(data.ToLower(), greetTrigger,"*")) && shouldGreet && user != lastGreet) //data.ToLower() == "hi" || data.ToLower() == "hello" || data.ToLower() == "hay" || data.ToLower() == "hey" || data.ToLower() == "hello?")
+                            else if ((isIn(data.ToLower(), greetTrigger) || isIn(data.ToLower(), greetTrigger,"!") || isIn(data.ToLower(), greetTrigger,"*")) && shouldGreet && user != lastGreet) //data.ToLower() == "hi" || data.ToLower() == "hello" || data.ToLower() == "hay" || data.ToLower() == "hey" || data.ToLower() == "hello?")
                             {
                                 if (user.ToLower() == "merlyin")
                                 {
@@ -698,6 +710,17 @@ namespace MiniBotV1
                             
                             else if (user.ToLower() == "minijackb" && command == "!ammo"){
                                 Writer.WriteLine(prefix+"!b00llets");
+                                Writer.Flush();
+                            }
+                            else if (mod && command == "!endbot")
+                            {
+                                Writer.WriteLine(prefix + "!ts");
+                                Writer.Flush();
+                                Writer.WriteLine(prefix + "!reddit");
+                                Writer.Flush();
+                                Writer.WriteLine(prefix + "!community");
+                                Writer.Flush();
+                                Writer.WriteLine(prefix + "!end");
                                 Writer.Flush();
                             }
                             Writer.Flush();
