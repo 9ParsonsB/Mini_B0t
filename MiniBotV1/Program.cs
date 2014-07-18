@@ -27,14 +27,85 @@ namespace MiniBotV1
         }
 
     }*/
+    class Settings
+    {
+        
+        private bool _debugMode = false;
+        private bool _inputAllowed = true;
+        private bool _shouldRun = true;
+        private string[] _mods = { "minijackb", "bidaman98caty", "tehbossaru", "leocrubellatti", "z3r0_b00t3r", "merlyin" };
+
+
+        public bool shouldRun
+        {
+            get
+            {
+                return _shouldRun;
+            }
+            set
+            {
+                if (value.GetType() != true.GetType())
+                {
+                    throw new OverflowException();
+                }
+                _shouldRun = value;
+            }
+
+        }
+
+
+        public bool inputAllowed
+        {
+            get
+            {
+                return _inputAllowed;
+            }
+            set
+            {
+                if (value.GetType() != true.GetType())
+                {
+                    throw new OverflowException();
+                }
+                _inputAllowed = value;
+            }
+
+        }
+
+        public bool debugMode
+        {
+            get
+            {
+                return _debugMode;
+            }
+            set
+            {
+                if (value.GetType() != true.GetType())
+                {
+                    throw new OverflowException();
+                }
+                _debugMode = value;
+            }
+
+        }
+
+        public string[] mods
+        {
+            get
+            {
+                return _mods;
+            }
+            
+        }
+
+    }
 
     class Program
     {
 
         static bool isMod(string user)
         {
-            string[] mods = {"minijackb", "bidaman98caty", "tehbossaru", "leocrubellatti","z3r0_b00t3r","merlyin"};
-            foreach (var x in mods)
+            Settings settings = new Settings();
+            foreach (var x in settings.mods)
             {
                 if (user.ToLower() == x.ToLower())
                 {
@@ -91,7 +162,7 @@ namespace MiniBotV1
             message = Regex.Replace(newdata, ":.*:", "");
             //Console.WriteLine(name + ": " + message + "\n");
 
-            Regex ComExpr = new Regex(@"!\w*\W");
+            Regex ComExpr = new Regex(@"!\w*");
             match = ComExpr.Match(message);
             //Console.WriteLine(match.Groups[0].Value);
 
@@ -134,6 +205,7 @@ namespace MiniBotV1
         //}
         static void Main(string[] args)
         {
+            Settings settings = new Settings();
             var merlyin = false;
             var bidaman98caty = false;
             string userName = "Mini_b0t"; // username
@@ -170,22 +242,22 @@ namespace MiniBotV1
             string data;
             var message = "";
             // string[] ex;
-            bool shouldRun = true;
+            
             bool input = false;
             string lastGreet = "";
             string lastFollow = "";
             bool shouldGreet = true;
             List<string> blacklist = new List<string>();
-            bool inputAllowed = true;
+            
             List<string> name = new List<string>();
             List<string> nameUser = new List<string>();
             List<string> gameName = new List<string>();
             List<int> gameAmount = new List<int>();
             var time = false;
-            bool debugMode = false;
+            
 
 
-            while (shouldRun)
+            while (settings.shouldRun)
             {
 
                 data = Reader.ReadLine();
@@ -209,14 +281,14 @@ namespace MiniBotV1
                     string[] ComArgs = getArgs(re[1]);
 
                     Random rnd = new Random();
-                    inputAllowed = !isIn(user, blacklist.ToArray());
+                    settings.inputAllowed = !isIn(user, blacklist.ToArray());
 
                     int Ran = rnd.Next(0,300);
                     if (Ran == 1){
                         Console.Clear();
                     }
 
-                    if (debugMode && !user.Contains("tmi.twitch.tv"))
+                    if (settings.debugMode && !user.Contains("tmi.twitch.tv"))
                     {
                         Writer.WriteLine(prefix + "fancyUser: \"" + fancyUser + "\"");
                         Writer.Flush();
@@ -235,7 +307,7 @@ namespace MiniBotV1
                     }
 
                     Writer.Flush();
-                    if (inputAllowed)
+                    if (settings.inputAllowed)
                     {
                         /*if (data.Length > 1)
                         {
@@ -244,7 +316,7 @@ namespace MiniBotV1
 
                         var mod = isMod(user);
 
-                        if (data != null && !input && !user.ToLower().Contains("b0t"))// &&  !user.Contains("bida"))
+                        if (data != null  && !user.ToLower().Contains("b0t"))// &&  !user.Contains("bida"))
                         {
 
                             if (data.Length > 14)
@@ -554,13 +626,13 @@ namespace MiniBotV1
                                 {
                                     if (ComArgs[1] == "on")
                                     {
-                                        debugMode = true;
+                                        settings.debugMode = true;
                                         Writer.WriteLine(prefix + "Debug mode on");
                                         Writer.Flush();
                                     }
                                     else if (ComArgs[1] == "off")
                                     {
-                                        debugMode = false;
+                                        settings.debugMode = false;
                                         Writer.WriteLine(prefix + "Debug mode off");
                                         Writer.Flush();
                                     }
@@ -639,7 +711,7 @@ namespace MiniBotV1
                             {
                                 if (data.ToLower().Contains("love") && data.ToLower().Contains("mini"))
                                 {
-                                    Writer.WriteLine(prefix + "YOU'RE NOT MY FATHER BIDAMAN98CATY!");
+                                    Writer.WriteLine(prefix + "YOU'RE MY MOTHER BIDAMAN98CATY!");
                                     Writer.Flush();
                                     bidaman98caty = false;
                                 }
