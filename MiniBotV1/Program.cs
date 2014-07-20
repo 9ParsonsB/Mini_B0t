@@ -187,7 +187,7 @@ namespace MiniBotV1
             var merlyin = false;
             var bidaman98caty = false;
             string userName = "Mini_b0t"; // username
-            string authCode = "oauth:kcm57m24avvtckilp0qvjqs9xtim5ng"; // auth key
+            string authCode = "oauth:5fobcu1uc7k7c8h291rougwswzzp4eb"; // auth key
             string channel = "z3r0_b00t3r".ToLower(); // name of channel you want to connect to
             string[] backTrigger = { "back", "im back", "i'm back", "i am back", "back :d" };
             string[] greetTrigger = {"hai","yo", "hey chat", "sup all", "salut", "herro", "hellu", "hi there", "hey guys", "moi", "hi", "hello", "hay", "hey", "whats up", "hiya", "sup", "haya", "hola", "ola", "buna", "aloha", "what up", "heyo", "hayo" };
